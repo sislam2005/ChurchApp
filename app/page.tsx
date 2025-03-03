@@ -1,101 +1,142 @@
-import Image from "next/image";
+import Image from "next/image"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { CalendarDays, Heart, BookOpen, Users, ChevronRight } from "lucide-react"
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
+    <div className="space-y-12">
+      {/* Hero Section */}
+      <section className="relative h-[70vh] flex items-center justify-center overflow-hidden rounded-lg">
         <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
+          src="https://images.unsplash.com/photo-1548625149-fc4a29cf7092?q=80&w=2070&auto=format&fit=crop"
+          alt="St. Vincent De Paul Catholic Church"
+          width={2070}
+          height={1380}
+          className="absolute inset-0 object-cover w-full h-full"
         />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+        <div className="absolute inset-0 bg-black/60" />
+        <div className="relative z-10 text-center text-white space-y-6 p-6">
+          <h1 className="text-4xl md:text-6xl font-bold">Welcome to St. Vincent De Paul</h1>
+          <p className="text-xl md:text-2xl">A place of worship, community, and service</p>
+          <Button asChild variant="cta" size="cta" className="group">
+            <a href="#quick-links">
+              Plan Your Visit
+              <ChevronRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+            </a>
+          </Button>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </section>
+
+      {/* Quick Links */}
+      <section id="quick-links" className="grid md:grid-cols-4 gap-6">
+        <Card className="transition-all hover:shadow-lg">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <CalendarDays className="h-5 w-5" />
+              Mass Times
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p>Sunday: 8:00 AM, 10:00 AM, 12:00 PM</p>
+            <p>Weekdays: 7:30 AM</p>
+          </CardContent>
+        </Card>
+        <Card className="transition-all hover:shadow-lg">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Heart className="h-5 w-5" />
+              Donate
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p>Support our mission and community</p>
+            <Button asChild className="mt-2" variant="custom">
+              <a href="/donate">Donate Now</a>
+            </Button>
+          </CardContent>
+        </Card>
+        <Card className="transition-all hover:shadow-lg">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <BookOpen className="h-5 w-5" />
+              Events
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p>Join us for fellowship and worship</p>
+            <Button asChild variant="outline" className="mt-2 rounded-sm">
+              <a href="/events">View Events</a>
+            </Button>
+          </CardContent>
+        </Card>
+        <Card className="transition-all hover:shadow-lg">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Users className="h-5 w-5" />
+              Ministries
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p>Get involved in our community</p>
+            <Button asChild variant="outline" className="mt-2 rounded-sm">
+              <a href="/ministries">Learn More</a>
+            </Button>
+          </CardContent>
+        </Card>
+      </section>
+
+      {/* Featured Sections */}
+      <section className="grid md:grid-cols-2 gap-8">
+        <div className="space-y-4">
+          <h2 className="text-3xl font-bold">Our Mission</h2>
+          <p className="text-muted-foreground">
+            St. Vincent De Paul Catholic Church is committed to spreading the Gospel of Jesus Christ, serving our
+            community, and fostering a welcoming environment for all. We strive to live out our faith through worship,
+            education, and charitable works.
+          </p>
+          <Button asChild variant="outline" className="rounded-sm">
+            <a href="/about">Learn More About Us</a>
+          </Button>
+        </div>
+        <div className="space-y-4">
+          <h2 className="text-3xl font-bold">Upcoming Events</h2>
+          <ul className="space-y-2">
+            <li className="flex items-start gap-2">
+              <CalendarDays className="h-5 w-5 mt-1 flex-shrink-0" />
+              <div>
+                <strong>Parish Picnic:</strong> Join us this Sunday after the 12:00 PM Mass for food and fellowship.
+              </div>
+            </li>
+            <li className="flex items-start gap-2">
+              <CalendarDays className="h-5 w-5 mt-1 flex-shrink-0" />
+              <div>
+                <strong>Bible Study:</strong> Every Wednesday at 7:00 PM in the Parish Hall.
+              </div>
+            </li>
+            <li className="flex items-start gap-2">
+              <CalendarDays className="h-5 w-5 mt-1 flex-shrink-0" />
+              <div>
+                <strong>Youth Group:</strong> Friday nights at 6:30 PM for teens and young adults.
+              </div>
+            </li>
+          </ul>
+          <Button asChild variant="link" className="p-0">
+            <a href="/events">See all events</a>
+          </Button>
+        </div>
+      </section>
+
+      {/* Call to Action */}
+      <section className="bg-primary text-primary-foreground p-12 rounded-lg text-center space-y-6">
+        <h2 className="text-3xl md:text-4xl font-bold">Join Our Community</h2>
+        <p className="text-lg text-muted-foreground mb-8">Join us in our mission to serve God&apos;s people through charity and compassion.</p>
+        <p className="text-lg text-muted-foreground">We&apos;re dedicated to making a difference in our community.</p>
+        <Button asChild variant="secondary" size="lg" className="rounded-sm">
+          <a href="/contact">Contact Us</a>
+        </Button>
+      </section>
     </div>
-  );
+  )
 }
+
