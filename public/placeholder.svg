@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="400" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="400" height="400" fill="#1F2937"/>
+  
+  <!-- Sky gradient -->
+  <defs>
+    <linearGradient id="skyGradient" x1="0" y1="0" x2="0" y2="400" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#4B5563"/>
+      <stop offset="100%" stop-color="#1F2937"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#skyGradient)"/>
+  
+  <!-- Church building -->
+  <path d="M150 100L250 100L300 200H250V350H150V200H100L150 100Z" fill="#4B5563"/>
+  <path d="M150 100L250 100L300 200H250V350H150V200H100L150 100Z" stroke="#9CA3AF" stroke-width="2"/>
+  
+  <!-- Church door -->
+  <rect x="175" y="250" width="50" height="100" fill="#9CA3AF"/>
+  
+  <!-- Church windows -->
+  <rect x="160" y="150" width="30" height="40" fill="#9CA3AF"/>
+  <rect x="210" y="150" width="30" height="40" fill="#9CA3AF"/>
+  
+  <!-- Cross on top -->
+  <path d="M190 80L210 80L210 100L230 100L230 120L210 120L210 140L190 140L190 120L170 120L170 100L190 100Z" fill="#9CA3AF"/>
+  
+  <!-- Decorative text -->
+  <text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="#9CA3AF" font-family="Arial" font-size="24">
+    St. Vincent De Paul
+  </text>
+  <text x="50%" y="60%" text-anchor="middle" dy=".3em" fill="#9CA3AF" font-family="Arial" font-size="16">
+    Catholic Church
+  </text>
+</svg> 

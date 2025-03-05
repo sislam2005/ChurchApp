@@ -75,3 +75,55 @@
   }
 }
 
+/* DaisyUI Theme Overrides */
+[data-theme="dark"] {
+  --p: 217.2 91.2% 59.8%;
+  --pc: 210 40% 98%;
+  --s: 215 28.3% 16.5%;
+  --sc: 210 40% 98%;
+  --a: 217.2 32.6% 17.5%;
+  --ac: 210 40% 98%;
+  --n: 217.2 32.6% 17.5%;
+  --nc: 210 40% 98%;
+  --b1: 222.2 84% 4.9%;
+  --b2: 217.2 32.6% 17.5%;
+  --b3: 215 28.3% 16.5%;
+  --bc: 210 40% 98%;
+}
+
+/* Custom Dark Mode Text Colors */
+[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+[data-theme="dark"] .text-charcoal-500,
+[data-theme="dark"] .text-charcoal-400,
+[data-theme="dark"] .text-muted-foreground {
+  @apply text-gray-300;
+}
+
+[data-theme="dark"] .bg-platinum-800,
+[data-theme="dark"] .bg-platinum-900 {
+  @apply bg-gray-900;
+}
+
+[data-theme="dark"] .bg-platinum-700 {
+  @apply bg-gray-800;
+}
+
+[data-theme="dark"] .border-platinum-300 {
+  @apply border-gray-700;
+}
+
+[data-theme="dark"] .text-moonstone-500 {
+  @apply text-blue-400;
+}
+
+[data-theme="dark"] .bg-moonstone-500 {
+  @apply bg-blue-600;
+}
+
+[data-theme="dark"] .hover\:bg-moonstone-600:hover {
+  @apply hover:bg-blue-700;
+}
+

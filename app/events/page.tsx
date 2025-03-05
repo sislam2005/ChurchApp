@@ -2,10 +2,11 @@
 
 import { useState } from "react"
 import Image from "next/image"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { CalendarDays, Clock, MapPin, Grid, CalendarIcon } from "lucide-react"
-import { Calendar, dateFnsLocalizer } from "react-big-calendar"
+import { Calendar as CalendarIcon, Clock, MapPin, Grid, Users } from "lucide-react"
+import { Calendar as BigCalendar, dateFnsLocalizer } from "react-big-calendar"
 import { format } from "date-fns"
 import { parse } from "date-fns"
 import { startOfWeek } from "date-fns"
@@ -66,8 +67,8 @@ const events = [
     id: 5,
     title: "Fourth of July Picnic",
     description: "Celebrate Independence Day with our parish family.",
-    image: "https://images.unsplash.com/photo-1575373033819-c8ccd801a756?auto=format&fit=crop&q=80&w=1000",
-    start: new Date(2025, 6, 4, 11, 0), // July 4, 2025, 11:00 AM
+    image: "https://images.unsplash.com/photo-1593034509785-5b17ba49f683?auto=format&fit=crop&q=80&w=1000",
+    start: new Date(2025, 6, 4, 11, 0),
     end: new Date(2025, 6, 4, 15, 0),
     location: "Church Grounds",
   },
@@ -88,6 +89,33 @@ const events = [
     start: new Date(2025, 11, 6, 9, 0), // December 6, 2025, 9:00 AM
     end: new Date(2025, 11, 6, 16, 0), // December 6, 2025, 4:00 PM
     location: "Parish Hall",
+  },
+  {
+    id: 8,
+    title: "Christmas Concert",
+    description: "Annual Christmas concert featuring all music ministry ensembles.",
+    image: "https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?auto=format&fit=crop&q=80&w=1000",
+    start: new Date(2024, 11, 15, 19, 0), // December 15, 2024, 7:00 PM
+    end: new Date(2024, 11, 15, 21, 0),
+    location: "Main Church",
+  },
+  {
+    id: 9,
+    title: "Easter Vigil",
+    description: "Special musical celebration for the Easter Vigil Mass.",
+    image: "https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?auto=format&fit=crop&q=80&w=1000",
+    start: new Date(2025, 3, 19, 20, 0), // April 19, 2025, 8:00 PM
+    end: new Date(2025, 3, 19, 23, 0),
+    location: "Main Church",
+  },
+  {
+    id: 10,
+    title: "Summer Music Festival",
+    description: "Community music festival featuring local choirs and musicians.",
+    image: "https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?auto=format&fit=crop&q=80&w=1000",
+    start: new Date(2025, 6, 20, 18, 0), // July 20, 2025, 6:00 PM
+    end: new Date(2025, 6, 20, 22, 0),
+    location: "Parish Center",
   },
 ]
 
@@ -129,132 +157,178 @@ const EventItem = ({ event }: { event: Event }) => (
 
 export default function EventsPage() {
   const [view, setView] = useState("grid")
+  const [currentDate, setCurrentDate] = useState(new Date())
+  const [selectedEvent, setSelectedEvent] = useState<typeof events[0] | null>(null)
+
+  const getDaysInMonth = (date: Date) => {
+    const year = date.getFullYear()
+    const month = date.getMonth()
+    const firstDay = new Date(year, month, 1)
+    const lastDay = new Date(year, month + 1, 0)
+    const daysInMonth = lastDay.getDate()
+    const startingDay = firstDay.getDay()
+
+    const days = []
+    // Add empty cells for days before the first day of the month
+    for (let i = 0; i < startingDay; i++) {
+      days.push(null)
+    }
+    // Add days of the month
+    for (let i = 1; i <= daysInMonth; i++) {
+      days.push(i)
+    }
+
+    return days
+  }
+
+  const getEventsForDate = (day: number) => {
+    if (!day) return []
+    const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day)
+    return events.filter(event => {
+      const eventDate = new Date(event.start)
+      return eventDate.getDate() === date.getDate() &&
+             eventDate.getMonth() === date.getMonth() &&
+             eventDate.getFullYear() === date.getFullYear()
+    })
+  }
+
+  const days = getDaysInMonth(currentDate)
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-4xl font-bold">Spring & Summer Events 2025</h1>
-        <div className="flex space-x-2">
-          <Button variant={view === "grid" ? "default" : "outline"} size="icon" onClick={() => setView("grid")}>
-            <Grid className="h-4 w-4" />
-          </Button>
-          <Button variant={view === "calendar" ? "default" : "outline"} size="icon" onClick={() => setView("calendar")}>
-            <CalendarIcon className="h-4 w-4" />
-          </Button>
+    <div className="min-h-screen bg-base-300">
+      {/* Hero Section */}
+      <section className="relative h-[60vh] flex items-center justify-center">
+        <div 
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: "url('/images/events-hero.jpg')" }}
+        >
+          <div className="absolute inset-0 bg-black/50" />
         </div>
+        <div className="relative text-center text-white z-10">
+          <h1 className="text-5xl font-bold mb-4">Upcoming Events</h1>
+          <p className="text-xl">Join us in fellowship and celebration</p>
       </div>
+      </section>
 
-      {view === "grid" ? (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {/* Events Grid */}
+      <section className="py-16">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {events.map((event) => (
-            <Card key={event.id} className="flex flex-col">
-              <Image
-                src={event.image || "/placeholder.svg"}
+              <div
+                key={event.id}
+                className="bg-base-200 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow"
+              >
+                <div className="relative h-48">
+                  <img
+                    src={event.image}
                 alt={event.title}
-                width={400}
-                height={200}
-                className="object-cover h-48 w-full rounded-t-lg"
-              />
-              <CardHeader>
-                <CardTitle>{event.title}</CardTitle>
-                <CardDescription>{event.description}</CardDescription>
-              </CardHeader>
-              <CardContent className="flex-grow">
-                <div className="space-y-2 text-sm">
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <div className="absolute bottom-4 left-4 right-4">
+                    <h3 className="text-xl font-semibold text-white mb-2">{event.title}</h3>
+                    <div className="flex items-center text-white/90 text-sm space-x-4">
                   <div className="flex items-center">
-                    <CalendarDays className="mr-2 h-4 w-4" />
-                    <span>{format(event.start, "MMMM d, yyyy")}</span>
+                        <CalendarIcon className="w-4 h-4 mr-1" />
+                        {format(event.start, "MMM d, yyyy")}
                   </div>
                   <div className="flex items-center">
-                    <Clock className="mr-2 h-4 w-4" />
-                    <span>
+                        <Clock className="w-4 h-4 mr-1" />
                       {format(event.start, "h:mm a")} - {format(event.end, "h:mm a")}
-                    </span>
-                  </div>
-                  <div className="flex items-center">
-                    <MapPin className="mr-2 h-4 w-4" />
-                    <span>{event.location}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </CardContent>
-              <CardFooter>
-                <Button className="w-full">Learn More</Button>
-              </CardFooter>
-            </Card>
-          ))}
+                <div className="p-6">
+                  <div className="flex items-center text-base-content/80 mb-4">
+                    <MapPin className="w-4 h-4 mr-2 text-primary" />
+                    <span>{event.location}</span>
+                  </div>
+                  <p className="text-base-content/80 mb-4">{event.description}</p>
+                  <Button 
+                    className="w-full bg-secondary hover:bg-secondary/90 text-secondary-content"
+                    onClick={() => setSelectedEvent(event)}
+                  >
+                    View Details
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-      ) : (
-        <div className="h-[600px]">
-          <Calendar
-            localizer={localizer}
-            events={events}
-            startAccessor="start"
-            endAccessor="end"
-            style={{ height: "100%" }}
-            components={{
-              event: EventItem,
-            }}
-            eventPropGetter={(event) => ({
-              style: {
-                backgroundColor: "transparent",
-                border: "none",
-              },
-            })}
-            formats={{
-              eventTimeRangeFormat: () => "",
-            }}
-          />
+      </section>
+
+      {/* Calendar Section */}
+      <section className="py-16 bg-base-200">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto text-center">
+            <div className="mb-8">
+              <h2 className="text-4xl font-bold text-primary mb-4">Church Calendar</h2>
+              <p className="text-base-content/80 text-lg">
+                Stay updated with all our upcoming events and celebrations
+              </p>
+            </div>
+            <Button asChild className="bg-secondary hover:bg-secondary/90 text-secondary-content">
+              <Link href="/calendar">View Full Calendar</Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Newsletter Section */}
+      <section className="py-16 bg-base-300">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-4xl font-bold text-primary mb-4">Stay Updated</h2>
+            <p className="text-base-content/80 text-lg mb-8">
+              Subscribe to our newsletter to receive updates about upcoming events and parish news
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <input
+                type="email"
+                placeholder="Enter your email"
+                className="px-4 py-2 rounded-lg bg-base-200 border border-base-300 focus:outline-none focus:ring-2 focus:ring-primary text-base-content"
+              />
+              <Button className="bg-amber-500 hover:bg-amber-600 text-amber-50">
+                Subscribe
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Event Details Modal */}
+      {selectedEvent && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-base-200 rounded-lg max-w-2xl w-full p-6">
+            <div className="flex justify-between items-start mb-4">
+              <h2 className="text-2xl font-bold text-primary">{selectedEvent.title}</h2>
+              <button
+                onClick={() => setSelectedEvent(null)}
+                className="text-base-content/70 hover:text-base-content"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div className="flex items-center text-base-content/80">
+                <CalendarIcon className="w-5 h-5 mr-2 text-primary" />
+                <span>{format(selectedEvent.start, "MMMM d, yyyy")}</span>
+              </div>
+              <div className="flex items-center text-base-content/80">
+                <Clock className="w-5 h-5 mr-2 text-primary" />
+                <span>{format(selectedEvent.start, "h:mm a")} - {format(selectedEvent.end, "h:mm a")}</span>
+              </div>
+              <div className="flex items-center text-base-content/80">
+                <MapPin className="w-5 h-5 mr-2 text-primary" />
+                <span>{selectedEvent.location}</span>
+              </div>
+              <p className="text-base-content/80">{selectedEvent.description}</p>
+            </div>
+          </div>
         </div>
       )}
-
-      <style jsx global>{`
-        .rbc-calendar {
-          background-color: #f8fafc;
-          border-radius: 0.5rem;
-          box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-          font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-        }
-        .rbc-header {
-          background-color: #e2e8f0;
-          padding: 0.5rem;
-          font-weight: 600;
-          color: #1e293b;
-        }
-        .rbc-today {
-          background-color: #e0f2fe;
-        }
-        .rbc-event {
-          background-color: transparent;
-        }
-        .rbc-event-content {
-          font-size: 0.875rem;
-        }
-        .rbc-toolbar button {
-          color: #1e293b;
-        }
-        .rbc-toolbar button:hover {
-          background-color: #e2e8f0;
-        }
-        .rbc-toolbar button.rbc-active {
-          background-color: #cbd5e1;
-        }
-        .rbc-month-view {
-          border-color: #e2e8f0;
-        }
-        .rbc-day-bg + .rbc-day-bg {
-          border-color: #e2e8f0;
-        }
-        .rbc-month-row + .rbc-month-row {
-          border-color: #e2e8f0;
-        }
-        .rbc-off-range-bg {
-          background-color: #f1f5f9;
-        }
-        .rbc-date-cell {
-          color: #475569;
-          font-weight: 500;
-        }
-      `}</style>
     </div>
   )
 }

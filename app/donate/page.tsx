@@ -1,306 +1,265 @@
 "use client"
 
-import { useState, useCallback } from "react"
-import { useRouter } from "next/navigation"
+import { useState, FormEvent, ChangeEvent } from "react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Heart, DollarSign, CreditCard, CalendarDays } from "lucide-react"
-import { toast } from "@/components/ui/use-toast"
+import { useToast } from "@/components/ui/use-toast"
+import { Loader2 } from "lucide-react"
+import StripePayment from "@/components/stripe-payment"
+import Image from "next/image"
 
-import dynamic from "next/dynamic"
+const donationAmounts = [
+  { value: "10", label: "$10" },
+  { value: "25", label: "$25" },
+  { value: "50", label: "$50" },
+  { value: "100", label: "$100" },
+  { value: "250", label: "$250" },
+  { value: "500", label: "$500" },
+]
 
-const DynamicCard = dynamic(() => import("@/components/ui/card").then((mod) => mod.Card))
-const DynamicCardHeader = dynamic(() => import("@/components/ui/card").then((mod) => mod.CardHeader))
-const DynamicCardTitle = dynamic(() => import("@/components/ui/card").then((mod) => mod.CardTitle))
-const DynamicCardContent = dynamic(() => import("@/components/ui/card").then((mod) => mod.CardContent))
-
-// Use these dynamic components in place of the regular Card components for the less critical sections
+const paymentMethods = [
+  { value: "card", label: "Credit/Debit Card" },
+  { value: "bank", label: "Bank Transfer" },
+]
 
 export default function DonatePage() {
-  const router = useRouter()
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const { toast } = useToast()
+  const [isLoading, setIsLoading] = useState(false)
+  const [clientSecret, setClientSecret] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     amount: "",
-    frequency: "one-time",
-    fund: "",
-    firstName: "",
-    lastName: "",
+    customAmount: "",
+    paymentMethod: "card",
+    name: "",
     email: "",
     phone: "",
-    address: "",
-    city: "",
-    state: "",
-    zip: "",
+    message: "",
   })
 
-  const handleInputChange = useCallback((e) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }, [])
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
 
-  const handleSubmit = useCallback(
-    async (e) => {
-      e.preventDefault()
-      setIsSubmitting(true)
-
-      try {
-        const response = await fetch("/api/create-donation", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            amount: formData.amount,
-            name: `${formData.firstName} ${formData.lastName}`,
-            email: formData.email,
-          }),
-        })
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
-
-        const data = await response.json()
-
-        if (data.success) {
-          router.push(
-            `/donate/confirmation?transactionId=${data.transactionId}&amount=${data.amount}&name=${data.name}`,
-          )
-        } else {
-          throw new Error(data.error || "Payment failed")
-        }
-      } catch (error) {
-        console.error("Error processing donation:", error)
-        toast({
-          title: "Error",
-          description: "There was an error processing your donation. Please try again.",
-          variant: "destructive",
-        })
-      } finally {
-        setIsSubmitting(false)
+    try {
+      // Validate amount
+      const amount = formData.customAmount || formData.amount
+      if (!amount || parseFloat(amount) <= 0) {
+        throw new Error("Please enter a valid amount")
       }
-    },
-    [formData, router],
-  )
+
+      // Create payment intent
+      const response = await fetch("/api/create-payment-intent", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          amount: parseFloat(amount),
+          name: formData.name,
+          email: formData.email,
+          message: formData.message,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to create payment intent")
+      }
+
+      const data = await response.json()
+      setClientSecret(data.clientSecret)
+    } catch (error) {
+      console.error("Error:", error)
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "There was a problem processing your donation. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-12">
-      <div className="text-center space-y-4">
-        <h1 className="text-4xl font-bold">Support Our Mission</h1>
-        <p className="text-xl text-muted-foreground">
-          Your generosity helps us serve our community and spread God&apos;s love.
+    <div className="container px-4 md:px-6 lg:px-8 py-12 md:py-16 lg:py-20">
+      <div className="text-center space-y-6 max-w-3xl mx-auto mb-16">
+        <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Support Our Mission</h1>
+        <p className="text-lg md:text-xl text-muted-foreground">
+          Your generous donation helps us continue our work in the community. Every contribution makes a difference.
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-8">
+      <div className="grid md:grid-cols-2 gap-8">
         <Card>
           <CardHeader>
             <CardTitle>Make a Donation</CardTitle>
-            <CardDescription>Choose an amount and frequency for your gift.</CardDescription>
+            <CardDescription>
+              Choose your donation amount and payment method
+            </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="amount">Donation Amount</Label>
-              <div className="flex space-x-2">
-                {["25", "50", "100", "250"].map((value) => (
-                  <Button
-                    key={value}
-                    type="button"
-                    variant={formData.amount === value ? "default" : "outline"}
-                    className="flex-1"
-                    onClick={() => setFormData((prev) => ({ ...prev, amount: value }))}
+          <CardContent>
+            {clientSecret ? (
+              <StripePayment clientSecret={clientSecret} />
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="space-y-4">
+                  <Label>Donation Amount</Label>
+                  <RadioGroup
+                    value={formData.amount}
+                    onValueChange={(value) => setFormData({ ...formData, amount: value })}
+                    className="grid grid-cols-2 gap-4"
                   >
-                    ${value}
-                  </Button>
-                ))}
+                    {donationAmounts.map((amount) => (
+                      <div key={amount.value}>
+                        <RadioGroupItem
+                          value={amount.value}
+                          id={amount.value}
+                          className="peer sr-only"
+                        />
+                        <Label
+                          htmlFor={amount.value}
+                          className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-transparent p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+                        >
+                          {amount.label}
+                        </Label>
               </div>
-              <Input
-                id="amount"
-                name="amount"
-                placeholder="Enter amount"
-                type="number"
-                value={formData.amount}
-                onChange={handleInputChange}
-                required
-              />
+                    ))}
+                  </RadioGroup>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="number"
+                      placeholder="Custom amount"
+                      value={formData.customAmount}
+                      onChange={(e) => setFormData({ ...formData, customAmount: e.target.value })}
+                      className="flex-1"
+                    />
+                    <span className="text-muted-foreground">USD</span>
+            </div>
+                </div>
+
+                <div className="space-y-4">
+                  <Label>Payment Method</Label>
+                  <RadioGroup
+                    value={formData.paymentMethod}
+                    onValueChange={(value) => setFormData({ ...formData, paymentMethod: value })}
+                    className="grid grid-cols-2 gap-4"
+                  >
+                    {paymentMethods.map((method) => (
+                      <div key={method.value}>
+                        <RadioGroupItem
+                          value={method.value}
+                          id={method.value}
+                          className="peer sr-only"
+                        />
+                        <Label
+                          htmlFor={method.value}
+                          className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-transparent p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+                        >
+                          {method.label}
+                        </Label>
+                      </div>
+                    ))}
+                  </RadioGroup>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="name">Name</Label>
+                      <Input
+                        id="name"
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Phone</Label>
+                    <Input
+                      id="phone"
+                      type="tel"
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    />
             </div>
             <div className="space-y-2">
-              <Label>Frequency</Label>
-              <RadioGroup
-                value={formData.frequency}
-                onValueChange={(value) => setFormData((prev) => ({ ...prev, frequency: value }))}
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="one-time" id="one-time" />
-                  <Label htmlFor="one-time">One-time</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="monthly" id="monthly" />
-                  <Label htmlFor="monthly">Monthly</Label>
-                </div>
-              </RadioGroup>
+                    <Label htmlFor="message">Message (Optional)</Label>
+                    <Input
+                      id="message"
+                      value={formData.message}
+                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                      placeholder="Add a message to your donation"
+                    />
+                  </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="fund">Designation</Label>
-              <Select
-                value={formData.fund}
-                onValueChange={(value) => setFormData((prev) => ({ ...prev, fund: value }))}
-              >
-                <SelectTrigger id="fund">
-                  <SelectValue placeholder="Select a fund" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="general">General Fund</SelectItem>
-                  <SelectItem value="building">Building Fund</SelectItem>
-                  <SelectItem value="outreach">Outreach Programs</SelectItem>
-                  <SelectItem value="youth">Youth Ministry</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    "Donate Now"
+                  )}
+                </Button>
+              </form>
+            )}
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>Your Information</CardTitle>
-            <CardDescription>Please provide your contact details.</CardDescription>
+            <CardTitle>Other Ways to Give</CardTitle>
+            <CardDescription>
+              Explore alternative ways to support our mission
+            </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="firstName">First Name</Label>
-                <Input
-                  id="firstName"
-                  name="firstName"
-                  placeholder="John"
-                  required
-                  value={formData.firstName}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="lastName">Last Name</Label>
-                <Input
-                  id="lastName"
-                  name="lastName"
-                  placeholder="Doe"
-                  required
-                  value={formData.lastName}
-                  onChange={handleInputChange}
-                />
+          <CardContent className="space-y-6">
+            <div className="space-y-4">
+              <h3 className="font-semibold">Bank Transfer</h3>
+              <div className="space-y-2 text-sm">
+                <p>Bank: Your Bank Name</p>
+                <p>Account Name: St. Vincent De Paul Catholic Church</p>
+                <p>Account Number: XXXX-XXXX-XXXX-XXXX</p>
+                <p>Routing Number: XXXX-XXXX</p>
               </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="email">Email Address</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="john.doe@example.com"
-                required
-                value={formData.email}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="phone">Phone Number</Label>
-              <Input
-                id="phone"
-                name="phone"
-                type="tel"
-                placeholder="(123) 456-7890"
-                value={formData.phone}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="address">Street Address</Label>
-              <Input
-                id="address"
-                name="address"
-                placeholder="123 Main St"
-                value={formData.address}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="city">City</Label>
-                <Input id="city" name="city" placeholder="Anytown" value={formData.city} onChange={handleInputChange} />
+
+            <div className="space-y-4">
+              <h3 className="font-semibold">Mail a Check</h3>
+              <div className="space-y-2 text-sm">
+                <p>St. Vincent De Paul Catholic Church</p>
+                <p>123 Main St</p>
+                <p>Anytown, USA 12345</p>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="state">State</Label>
-                <Input id="state" name="state" placeholder="CA" value={formData.state} onChange={handleInputChange} />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="zip">ZIP Code</Label>
-                <Input id="zip" name="zip" placeholder="12345" value={formData.zip} onChange={handleInputChange} />
+
+            <div className="space-y-4">
+              <h3 className="font-semibold">In-Person Donation</h3>
+              <div className="space-y-2 text-sm">
+                <p>Visit us during office hours:</p>
+                <p>Monday - Friday: 9:00 AM - 5:00 PM</p>
+                <p>Saturday: 9:00 AM - 1:00 PM</p>
+                <p>Sunday: Closed</p>
               </div>
             </div>
           </CardContent>
-          <CardFooter>
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {isSubmitting ? "Processing..." : "Complete Donation"}
-            </Button>
-          </CardFooter>
         </Card>
-      </form>
-
-      <div className="space-y-6">
-        <DynamicCard>
-          <DynamicCardHeader>
-            <DynamicCardTitle className="flex items-center gap-2">
-              <Heart className="h-5 w-5" />
-              Why Your Support Matters
-            </DynamicCardTitle>
-          </DynamicCardHeader>
-          <DynamicCardContent>
-            <p>Your donations help us:</p>
-            <ul className="list-disc list-inside mt-2 space-y-1">
-              <li>Maintain our beautiful church</li>
-              <li>Support community outreach programs</li>
-              <li>Provide religious education</li>
-              <li>Assist those in need in our parish</li>
-            </ul>
-          </DynamicCardContent>
-        </DynamicCard>
-
-        <DynamicCard>
-          <DynamicCardHeader>
-            <DynamicCardTitle className="flex items-center gap-2">
-              <DollarSign className="h-5 w-5" />
-              Other Ways to Give
-            </DynamicCardTitle>
-          </DynamicCardHeader>
-          <DynamicCardContent className="space-y-2">
-            <p className="flex items-center gap-2">
-              <CreditCard className="h-4 w-4" />
-              <span>Set up recurring donations through your bank</span>
-            </p>
-            <p className="flex items-center gap-2">
-              <CalendarDays className="h-4 w-4" />
-              <span>Include us in your estate planning</span>
-            </p>
-          </DynamicCardContent>
-        </DynamicCard>
       </div>
-
-      <DynamicCard>
-        <DynamicCardHeader>
-          <DynamicCardTitle>Our Commitment to Transparency</DynamicCardTitle>
-        </DynamicCardHeader>
-        <DynamicCardContent>
-          <p>
-            St. Vincent De Paul Catholic Church is committed to using your donations responsibly and effectively. We
-            provide regular financial reports to our parish and are always available to answer any questions about how
-            funds are used. Your trust is important to us, and we strive to be good stewards of your generosity.
-          </p>
-        </DynamicCardContent>
-      </DynamicCard>
     </div>
   )
 }

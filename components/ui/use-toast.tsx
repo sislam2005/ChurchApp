@@ -1,3 +1,5 @@
+"use client"
+
 import * as React from "react"
 
 const TOAST_LIMIT = 1
@@ -5,8 +7,8 @@ const TOAST_REMOVE_DELAY = 1000000
 
 type ToasterToast = {
   id: string
-  title?: React.ReactNode
-  description?: React.ReactNode
+  title?: string
+  description?: string
   action?: React.ReactNode
   variant?: "default" | "destructive"
 }
@@ -34,7 +36,7 @@ type Action =
     }
   | {
       type: ActionType["UPDATE_TOAST"]
-      toast: Partial<ToasterToast> & Pick<ToasterToast, "id">
+      toast: Partial<ToasterToast>
     }
   | {
       type: ActionType["DISMISS_TOAST"]
@@ -158,7 +160,7 @@ function toast({ ...props }: Toast) {
   }
 }
 
-function useToast() {
+export function useToast() {
   const [state, setState] = React.useState<State>(memoryState)
 
   React.useEffect(() => {
@@ -178,4 +180,4 @@ function useToast() {
   }
 }
 
-export { useToast, toast } 
+export { toast } 
