@@ -3,7 +3,7 @@
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Music, Users, Mic2, Piano, Guitar, Calendar, MapPin, Clock } from "lucide-react"
+import { Users, Mic2, Calendar, MapPin, Clock, Piano } from "lucide-react"
 
 const musicEnsembles = [
   {
@@ -76,10 +76,9 @@ export default function MusicMinistryPage() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
               <h2 className="text-3xl font-bold text-charcoal-500">About Our Music Ministry</h2>
-              <p className="text-lg text-charcoal-400">
-                Our music ministry enhances the worship experience through beautiful music and song.
-                We welcome singers and musicians of all skill levels to join our various ensembles
-                and share their talents with our community.
+              <p className="text-charcoal-400 text-lg">
+                Whether you&apos;re a seasoned musician or just starting your musical journey,
+                there&apos;s a place for you in our music ministry.
               </p>
               <ul className="space-y-3 text-charcoal-400">
                 <li className="flex items-center gap-2">

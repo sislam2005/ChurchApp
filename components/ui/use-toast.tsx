@@ -2,15 +2,26 @@
 
 import * as React from "react"
 
+import type {
+  ToastActionElement,
+  ToastProps,
+} from "./toast"
+
 const TOAST_LIMIT = 1
 const TOAST_REMOVE_DELAY = 1000000
 
-type ToasterToast = {
+type ToasterToast = ToastProps & {
   id: string
-  title?: string
-  description?: string
-  action?: React.ReactNode
+  title?: React.ReactNode
+  description?: React.ReactNode
+  action?: ToastActionElement
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+}
+
+interface Toast extends Omit<ToasterToast, "id"> {
   variant?: "default" | "destructive"
+  duration?: number
 }
 
 const actionTypes = {
@@ -102,6 +113,7 @@ export const reducer = (state: State, action: Action): State => {
           t.id === toastId || toastId === undefined
             ? {
                 ...t,
+                open: false,
               }
             : t
         ),
@@ -133,9 +145,15 @@ function dispatch(action: Action) {
   })
 }
 
-type Toast = Omit<ToasterToast, "id">
+interface ToastOptions {
+  title?: React.ReactNode
+  description?: React.ReactNode
+  action?: ToastActionElement
+  variant?: "default" | "destructive"
+  duration?: number
+}
 
-function toast({ ...props }: Toast) {
+function toast(props: Toast) {
   const id = genId()
 
   const update = (props: ToasterToast) =>
@@ -150,6 +168,10 @@ function toast({ ...props }: Toast) {
     toast: {
       ...props,
       id,
+      open: true,
+      onOpenChange: (open) => {
+        if (!open) dismiss()
+      },
     },
   })
 

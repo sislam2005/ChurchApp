@@ -40,6 +40,11 @@ export default function Footer() {
                 Contact
               </Link>
             </li>
+            <li>
+              <Link href="/volunteer" className="text-charcoal-400 transition-colors hover:text-moonstone-500">
+                Volunteer
+              </Link>
+            </li>
           </ul>
         </div>
         <div className="flex-1">

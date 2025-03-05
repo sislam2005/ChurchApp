@@ -3,7 +3,7 @@
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Users, Heart, BookOpen, Music, GraduationCap, Handshake, Church, Coffee, HandIcon, Calendar, MapPin, Clock } from "lucide-react"
+import { Calendar, MapPin, Clock, Users, GraduationCap, Heart } from "lucide-react"
 
 const youthPrograms = [
   {

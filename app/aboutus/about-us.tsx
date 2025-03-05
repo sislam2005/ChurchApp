@@ -1,6 +1,6 @@
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowRight, CheckCircle2, Clock, Globe, Users } from "lucide-react"
+import { ArrowRight, CheckCircle2, Clock, Globe, Users, BookOpen, GraduationCap, Calendar, MapPin } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -20,9 +20,13 @@ export default function AboutUs() {
               <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl">
                 We're Building the Future of Digital Experiences
               </h1>
-              <p className="max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                Founded in 2018, our company has been at the forefront of innovation, creating solutions that transform
-                how people interact with technology.
+              <p className="text-charcoal-400 text-lg">
+                We&apos;re a vibrant community of faith, dedicated to serving God and our neighbors.
+                Our church has been a cornerstone of spiritual growth and community service since 1950.
+              </p>
+              <p className="text-charcoal-400 text-lg">
+                Our mission is to spread the love of Christ through worship, education, and service to others.
+                We welcome all who seek to grow in their faith and make a difference in the world.
               </p>
             </div>
             <div className="flex justify-center">

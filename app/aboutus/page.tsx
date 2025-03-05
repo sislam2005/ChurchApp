@@ -29,8 +29,13 @@ export default function AboutUs() {
               <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
                 Our Church Community
               </h1>
-              <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-[600px]">
-                Founded in 1950, St. Vincent De Paul Catholic Church has been a cornerstone of faith, community, and service in our area.
+              <p className="text-charcoal-400 text-lg">
+                We&apos;re a vibrant community of faith, dedicated to serving God and our neighbors.
+                Our church has been a cornerstone of spiritual growth and community service since 1950.
+              </p>
+              <p className="text-charcoal-400 text-lg">
+                Our mission is to spread the love of Christ through worship, education, and service to others.
+                We welcome all who seek to grow in their faith and make a difference in the world.
               </p>
               <div className="flex flex-wrap gap-4 pt-4">
                 <Button

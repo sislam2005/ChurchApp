@@ -6,9 +6,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { MapPin, Phone, Mail } from "lucide-react"
+import { MapPin, Phone, Clock, CheckCircle2 } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
-import { Loader2, CheckCircle2 } from "lucide-react"
+import { Loader2 } from "lucide-react"
+import Image from "next/image"
 
 export default function ContactPage() {
   const { toast } = useToast()
@@ -78,8 +79,12 @@ export default function ContactPage() {
     <div className="container px-4 md:px-6 lg:px-8 py-12 md:py-16 lg:py-20">
       <div className="text-center space-y-6 max-w-3xl mx-auto mb-16">
         <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-charcoal-500">Contact Us</h1>
-        <p className="text-lg md:text-xl text-charcoal-400">
-          Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+        <p className="text-charcoal-400 text-lg">
+          We&apos;d love to hear from you! Whether you have questions about our services,
+          want to learn more about our community, or need assistance, we&apos;re here to help.
+        </p>
+        <p className="text-charcoal-400 text-lg">
+          Please don&apos;t hesitate to reach out to us through the contact form below.
         </p>
       </div>
 

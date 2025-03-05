@@ -1,12 +1,14 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { loadStripe } from "@stripe/stripe-js"
-import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js"
-import { Button } from "@/components/ui/button"
-import { Loader2 } from "lucide-react"
-import { useToast } from "@/components/ui/use-toast"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { useToast } from "@/components/ui/use-toast"
+import { Loader2, CheckCircle2 } from "lucide-react"
+import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js"
+import { loadStripe } from "@stripe/stripe-js"
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
 

@@ -182,9 +182,13 @@ export default function MinistriesPage() {
             </div>
             <div className="space-y-6 order-1 md:order-2">
               <h2 className="text-3xl font-bold text-charcoal-500">Education Ministry</h2>
-              <p className="text-lg text-charcoal-400">
+              <p className="text-charcoal-400 text-lg">
                 Our education ministry provides opportunities for spiritual growth and learning
                 for all ages. We offer various programs to deepen understanding of our faith.
+              </p>
+              <p className="text-charcoal-400 text-lg">
+                Whether you&apos;re interested in teaching, learning, or volunteering, there are many ways to participate
+                in our education ministry.
               </p>
               <ul className="space-y-3 text-charcoal-400">
                 <li className="flex items-center gap-2">

@@ -1,3 +1,4 @@
+import '@testing-library/jest-dom'
 import { render, screen } from '@testing-library/react'
 import { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent } from '../ui/card'
 

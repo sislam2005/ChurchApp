@@ -5,9 +5,9 @@ import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Calendar as CalendarIcon, Clock, MapPin, Grid, Users } from "lucide-react"
+import { CalendarIcon, Clock, MapPin, Users } from "lucide-react"
 import { Calendar as BigCalendar, dateFnsLocalizer } from "react-big-calendar"
-import { format } from "date-fns"
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isToday, addMonths } from "date-fns"
 import { parse } from "date-fns"
 import { startOfWeek } from "date-fns"
 import { getDay } from "date-fns"
@@ -220,10 +220,12 @@ export default function EventsPage() {
                 className="bg-base-200 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow"
               >
                 <div className="relative h-48">
-                  <img
+                  <Image
                     src={event.image}
-                alt={event.title}
-                    className="w-full h-full object-cover"
+                    alt={event.title}
+                    width={400}
+                    height={300}
+                    className="w-full h-48 object-cover rounded-t-lg"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   <div className="absolute bottom-4 left-4 right-4">

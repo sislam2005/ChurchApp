@@ -2,7 +2,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Calendar, Clock, MapPin, Phone } from "lucide-react"
+import { Clock, MapPin, Phone } from "lucide-react"
 
 export default function HomePage() {
   return (
@@ -116,30 +116,38 @@ export default function HomePage() {
         <div className="container px-4 md:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-center text-charcoal-500 mb-12">Quick Links</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <Card className="bg-platinum-800 border-platinum-300 hover:border-moonstone-500 transition-colors">
-              <CardHeader>
-                <CardTitle className="text-charcoal-500">About Us</CardTitle>
-                <CardDescription className="text-charcoal-400">Learn about our history and mission</CardDescription>
-              </CardHeader>
-            </Card>
-            <Card className="bg-platinum-800 border-platinum-300 hover:border-moonstone-500 transition-colors">
-              <CardHeader>
-                <CardTitle className="text-charcoal-500">Donate</CardTitle>
-                <CardDescription className="text-charcoal-400">Support our church and community</CardDescription>
-              </CardHeader>
-            </Card>
-            <Card className="bg-platinum-800 border-platinum-300 hover:border-moonstone-500 transition-colors">
-              <CardHeader>
-                <CardTitle className="text-charcoal-500">Events</CardTitle>
-                <CardDescription className="text-charcoal-400">Upcoming events and celebrations</CardDescription>
-              </CardHeader>
-            </Card>
-            <Card className="bg-platinum-800 border-platinum-300 hover:border-moonstone-500 transition-colors">
-              <CardHeader>
-                <CardTitle className="text-charcoal-500">Ministries</CardTitle>
-                <CardDescription className="text-charcoal-400">Get involved in our community</CardDescription>
-              </CardHeader>
-            </Card>
+            <Link href="/aboutus" className="block">
+              <Card className="bg-platinum-800 border-platinum-300 hover:border-moonstone-500 hover:bg-platinum-700 transition-colors cursor-pointer">
+                <CardHeader>
+                  <CardTitle className="text-charcoal-500">About Us</CardTitle>
+                  <CardDescription className="text-charcoal-400">Learn about our history and mission</CardDescription>
+                </CardHeader>
+              </Card>
+            </Link>
+            <Link href="/donate" className="block">
+              <Card className="bg-platinum-800 border-platinum-300 hover:border-moonstone-500 hover:bg-platinum-700 transition-colors cursor-pointer">
+                <CardHeader>
+                  <CardTitle className="text-charcoal-500">Donate</CardTitle>
+                  <CardDescription className="text-charcoal-400">Support our church and community</CardDescription>
+                </CardHeader>
+              </Card>
+            </Link>
+            <Link href="/events" className="block">
+              <Card className="bg-platinum-800 border-platinum-300 hover:border-moonstone-500 hover:bg-platinum-700 transition-colors cursor-pointer">
+                <CardHeader>
+                  <CardTitle className="text-charcoal-500">Events</CardTitle>
+                  <CardDescription className="text-charcoal-400">Upcoming events and celebrations</CardDescription>
+                </CardHeader>
+              </Card>
+            </Link>
+            <Link href="/ministries" className="block">
+              <Card className="bg-platinum-800 border-platinum-300 hover:border-moonstone-500 hover:bg-platinum-700 transition-colors cursor-pointer">
+                <CardHeader>
+                  <CardTitle className="text-charcoal-500">Ministries</CardTitle>
+                  <CardDescription className="text-charcoal-400">Get involved in our community</CardDescription>
+                </CardHeader>
+              </Card>
+            </Link>
           </div>
         </div>
       </section>
