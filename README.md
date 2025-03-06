@@ -1,5 +1,5 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-Demo:https://v0-fork-of-church-app.vercel.app/events
+
 
 ## Getting Started
 
