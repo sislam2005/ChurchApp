@@ -73,6 +73,22 @@ For more details, check out the [Next.js deployment documentation](https://nextj
 ## 📜 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+
+![Image](https://github.com/user-attachments/assets/06981e80-381b-43be-9b29-3dfa2090360a)
+
+![Image](https://github.com/user-attachments/assets/6055b880-6abf-494a-8c62-0647a75f5a71)
+
+![Image](https://github.com/user-attachments/assets/5e48d910-e645-4ddf-a6e8-120c9c51eea1)
+
+![Image](https://github.com/user-attachments/assets/b607b421-2720-404b-9ecc-2de5e107b818)
+
+![Image](https://github.com/user-attachments/assets/eabae2e1-b14f-4fd1-bd8f-1b1ef00724d0)
+
+![Image](https://github.com/user-attachments/assets/eb1e2141-1d35-4e72-9432-6b0ac21e0af0)
+
+![Image](https://github.com/user-attachments/assets/49415c15-83bc-45f6-90e0-f34f985e45c4)
+
 ## 📁 Project Structure
 ```bash
 ChurchApp/
@@ -92,6 +108,8 @@ ChurchApp/
 │
 ├── package.json  # Project metadata and npm scripts
 └── README.md    # This file
+
+
 
 
 
