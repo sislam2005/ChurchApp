@@ -3,10 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { useToast } from "@/components/ui/use-toast"
-import { Loader2, CheckCircle2 } from "lucide-react"
+import { Loader2 } from "lucide-react"
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js"
 import { loadStripe } from "@stripe/stripe-js"
 
@@ -16,13 +13,12 @@ function PaymentForm({ clientSecret }: { clientSecret: string }) {
   const stripe = useStripe()
   const elements = useElements()
   const [isLoading, setIsLoading] = useState(false)
-  const { toast } = useToast()
-  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (!stripe || !elements) {
+      console.log("Stripe or Elements not loaded yet")
       return
     }
 
@@ -38,19 +34,13 @@ function PaymentForm({ clientSecret }: { clientSecret: string }) {
 
       if (error) {
         console.error("Payment error:", error)
-        toast({
-          title: "Payment Error",
-          description: error.message || "There was a problem processing your payment.",
-          variant: "destructive",
-        })
+        alert(error.message)
+      } else {
+        console.log("Payment successfully confirmed")
       }
     } catch (error) {
       console.error("Error:", error)
-      toast({
-        title: "Error",
-        description: "An unexpected error occurred. Please try again.",
-        variant: "destructive",
-      })
+      alert("An unexpected error occurred. Please try again.")
     } finally {
       setIsLoading(false)
     }
@@ -63,10 +53,7 @@ function PaymentForm({ clientSecret }: { clientSecret: string }) {
       </div>
       <Button type="submit" className="w-full" disabled={isLoading || !stripe}>
         {isLoading ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Processing Payment...
-          </>
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
         ) : (
           "Pay Now"
         )}
@@ -81,4 +68,4 @@ export default function StripePayment({ clientSecret }: { clientSecret: string }
       <PaymentForm clientSecret={clientSecret} />
     </Elements>
   )
-} 
+}

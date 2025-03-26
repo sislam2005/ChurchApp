@@ -9,8 +9,8 @@ import Footer from "@/components/footer"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "St. Vincent De Paul Catholic Church",
-  description: "Welcome to St. Vincent De Paul Catholic Church",
+  title: "Roots Foundation Trust",
+  description: "Welcome to the donation page for Roots Foundation Trust",
 }
 
 export default function RootLayout({
@@ -25,7 +25,6 @@ export default function RootLayout({
         <main className="flex-grow">
           {children}
         </main>
-        <Footer />
         <Toaster />
       </body>
     </html>

@@ -8,6 +8,18 @@ const nextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'upload.wikimedia.org',
+        port: '',
+        pathname: '/**',  // Allow all paths under the domain
+      },
+	        {
+        protocol: 'https',
+        hostname: 'rootsfoundationtrust.org',
+        port: '',
+        pathname: '/**',  // Allow all paths under the domain
+      },
     ],
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',
@@ -31,4 +43,4 @@ const nextConfig = {
   },
 }
 
-module.exports = nextConfig 
+module.exports = nextConfig;
