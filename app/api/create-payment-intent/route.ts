@@ -28,21 +28,32 @@ export async function POST(req: Request) {
     }
 
     let paymentIntent;
+    let customer;
 
     // Create Stripe customer if recurring donation
-    let customer;
     if (recurring !== "One-time") {
-      customer = await stripe.customers.create({
+      // Check if the customer already exists
+      const existingCustomer = await stripe.customers.list({
         email,
-        name,
-        metadata: { recurring, giftAid: String(giftAid) },
+        limit: 1,
       });
+
+      if (existingCustomer.data.length > 0) {
+        customer = existingCustomer.data[0]; // Use existing customer if found
+      } else {
+        // Create a new customer if not found
+        customer = await stripe.customers.create({
+          email,
+          name,
+          metadata: { recurring, giftAid: String(giftAid) },
+        });
+      }
     }
 
     // If recurring is selected, create a subscription
-    if (recurring !== "One-time") {
+    if (recurring !== "One-time" && customer) {
       const subscription = await stripe.subscriptions.create({
-        customer: customer.id, // Use created customer
+        customer: customer.id, // Use created or existing customer
         items: [
           {
             price_data: {
