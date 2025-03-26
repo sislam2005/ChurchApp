@@ -58,7 +58,7 @@ export async function POST(req: Request) {
           {
             price_data: {
               currency: "gbp",
-              product_data: {
+              product: { // Corrected: Use 'product' instead of 'product_data'
                 name: "Recurring Donation",
               },
               unit_amount: amount * 100, // Amount in cents
