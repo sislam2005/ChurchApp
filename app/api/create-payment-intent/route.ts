@@ -50,6 +50,17 @@ export async function POST(req: Request) {
       }
     }
 
+    let productId: string;
+
+    // Create a product for the subscription
+    if (recurring !== "One-time") {
+      const product = await stripe.products.create({
+        name: "Recurring Donation",
+      });
+
+      productId = product.id;
+    }
+
     // If recurring is selected, create a subscription
     if (recurring !== "One-time" && customer) {
       const subscription = await stripe.subscriptions.create({
@@ -58,9 +69,7 @@ export async function POST(req: Request) {
           {
             price_data: {
               currency: "gbp",
-              product: { // Corrected: Use 'product' instead of 'product_data'
-                name: "Recurring Donation",
-              },
+              product: productId, // Use product ID here
               unit_amount: amount * 100, // Amount in cents
               recurring: {
                 interval: recurring.toLowerCase(), // weekly, monthly, yearly
