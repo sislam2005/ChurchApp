@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { supabase } from "../../../utils/supabaseClient"; // Adjusted path
 
-// Ensure Stripe's secret key is present
 if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error("Missing STRIPE_SECRET_KEY environment variable");
 }
@@ -13,47 +12,27 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 export async function POST(req: Request) {
   try {
-    const {
-      amount,
-      recurring,
-      giftAid,
-      name,
-      email,
-      address, // address should be an object with addressLine1, addressLine2, city, postcode, country
-    } = await req.json();
+    const { amount, recurring, giftAid, name, email, address } = await req.json();
 
-    // Validate the amount
     if (!amount || amount <= 0) {
       return NextResponse.json({ error: "Invalid amount" }, { status: 400 });
     }
 
     let paymentIntent;
     let customer;
+    let productId: string | null = null; // Initialize productId
 
-    // Create Stripe customer if recurring donation
     if (recurring !== "One-time") {
-      // Check if the customer already exists
-      const existingCustomer = await stripe.customers.list({
-        email,
-        limit: 1,
-      });
+      const existingCustomer = await stripe.customers.list({ email, limit: 1 });
 
-      if (existingCustomer.data.length > 0) {
-        customer = existingCustomer.data[0]; // Use existing customer if found
-      } else {
-        // Create a new customer if not found
-        customer = await stripe.customers.create({
-          email,
-          name,
-          metadata: { recurring, giftAid: String(giftAid) },
-        });
-      }
-    }
+      customer = existingCustomer.data.length
+        ? existingCustomer.data[0]
+        : await stripe.customers.create({
+            email,
+            name,
+            metadata: { recurring, giftAid: String(giftAid) },
+          });
 
-    let productId: string;
-
-    // Create a product for the subscription
-    if (recurring !== "One-time") {
       const product = await stripe.products.create({
         name: "Recurring Donation",
       });
@@ -61,52 +40,34 @@ export async function POST(req: Request) {
       productId = product.id;
     }
 
-    // If recurring is selected, create a subscription
-    if (recurring !== "One-time" && customer) {
+    if (recurring !== "One-time" && customer && productId) {
       const subscription = await stripe.subscriptions.create({
-        customer: customer.id, // Use created or existing customer
+        customer: customer.id,
         items: [
           {
             price_data: {
               currency: "gbp",
-              product: productId, // Use product ID here
-              unit_amount: amount * 100, // Amount in cents
-              recurring: {
-                interval: recurring.toLowerCase(), // weekly, monthly, yearly
-              },
+              product: productId,
+              unit_amount: amount * 100,
+              recurring: { interval: recurring.toLowerCase() },
             },
           },
         ],
-        metadata: {
-          name,
-          email,
-          recurring,
-          giftAid: String(giftAid),
-        },
+        metadata: { name, email, recurring, giftAid: String(giftAid) },
       });
 
       paymentIntent = subscription.latest_invoice.payment_intent;
     } else {
-      // If it's a one-time donation, create a PaymentIntent
       paymentIntent = await stripe.paymentIntents.create({
-        amount: amount * 100, // Convert to cents
+        amount: amount * 100,
         currency: "gbp",
-        automatic_payment_methods: {
-          enabled: true,
-        },
-        metadata: {
-          name,
-          email,
-          recurring,
-          giftAid: String(giftAid),
-        },
+        automatic_payment_methods: { enabled: true },
+        metadata: { name, email, recurring, giftAid: String(giftAid) },
       });
     }
 
-    // Save donation data to Supabase, including the address for Gift Aid if selected
-    const { data, error } = await supabase
-      .from("donations")
-      .insert([{
+    const { error } = await supabase.from("donations").insert([
+      {
         name,
         email,
         amount,
@@ -118,20 +79,17 @@ export async function POST(req: Request) {
         city: giftAid ? address.city : null,
         postcode: giftAid ? address.postcode : null,
         country: giftAid ? address.country : null,
-      }]);
+      },
+    ]);
 
     if (error) {
       console.error("Error saving donation data:", error);
       return NextResponse.json({ error: "Error saving donation data" }, { status: 500 });
     }
 
-    // Return the client secret to the frontend for payment confirmation
     return NextResponse.json({ clientSecret: paymentIntent.client_secret });
   } catch (error) {
     console.error("Error creating payment intent or subscription:", error);
-    return NextResponse.json(
-      { error: "Error creating payment intent or subscription" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Error creating payment intent or subscription" }, { status: 500 });
   }
 }
