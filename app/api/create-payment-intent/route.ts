@@ -56,7 +56,12 @@ export async function POST(req: Request) {
         metadata: { name, email, recurring, giftAid: String(giftAid) },
       });
 
-      paymentIntent = subscription.latest_invoice.payment_intent;
+      // Null check for subscription.latest_invoice
+      if (subscription.latest_invoice) {
+        paymentIntent = subscription.latest_invoice.payment_intent;
+      } else {
+        throw new Error("Subscription invoice not found.");
+      }
     } else {
       paymentIntent = await stripe.paymentIntents.create({
         amount: amount * 100,
@@ -66,21 +71,19 @@ export async function POST(req: Request) {
       });
     }
 
-    const { error } = await supabase.from("donations").insert([
-      {
-        name,
-        email,
-        amount,
-        recurring,
-        gift_aid: giftAid,
-        stripe_payment_intent: paymentIntent.id,
-        address_line1: giftAid ? address.line1 : null,
-        address_line2: giftAid ? address.line2 : null,
-        city: giftAid ? address.city : null,
-        postcode: giftAid ? address.postcode : null,
-        country: giftAid ? address.country : null,
-      },
-    ]);
+    const { error } = await supabase.from("donations").insert([{
+      name,
+      email,
+      amount,
+      recurring,
+      gift_aid: giftAid,
+      stripe_payment_intent: paymentIntent.id,
+      address_line1: giftAid ? address.line1 : null,
+      address_line2: giftAid ? address.line2 : null,
+      city: giftAid ? address.city : null,
+      postcode: giftAid ? address.postcode : null,
+      country: giftAid ? address.country : null,
+    }]);
 
     if (error) {
       console.error("Error saving donation data:", error);
